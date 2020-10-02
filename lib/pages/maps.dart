@@ -34,6 +34,9 @@ class _MapPages extends State<MapPages> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Map'),
+      ),
       body: GoogleMap(
         initialCameraPosition: center,
         onMapCreated: (GoogleMapController controller) {

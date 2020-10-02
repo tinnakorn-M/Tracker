@@ -1,9 +1,12 @@
-import 'dart:io';
 import 'dart:async';
+import 'package:Tracker/models/meanlocation.dart';
+import 'package:Tracker/models/scopmodel.dart';
+import 'package:Tracker/pages/home.dart';
 import 'package:google_maps_flutter_heatmap/google_maps_flutter_heatmap.dart';
 import 'package:Tracker/models/smartlocation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:scoped_model/scoped_model.dart';
 
 class HeatMapPages extends StatefulWidget {
   @override
@@ -13,78 +16,56 @@ class HeatMapPages extends StatefulWidget {
 }
 
 class _HeatMapPages extends State<HeatMapPages> {
-  //----------------------------------------------------------------------------
-  Completer<GoogleMapController> _controller = Completer();
-  final Set<Heatmap> _heatmaps = {};
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(16.240652812500006, 103.25703583333335),
-    zoom: 18,
-  );
-  LatLng _heatmapLocation;
-  //----------------------------------------------------------------------------
-  List<SmartLocation> _Location;
-
+  String time;
   double latitude;
   double longitude;
   String frequency;
   String rssi;
-  String rssiP;
   String snr;
+  double lat, lng;
+
+  var TappedPoint;
+
+  //----------------------------------------------------------------------------
+  final Set<Heatmap> _heatmaps = {};
+  LatLng _heatmapLocation;
+  List<Marker> myMarker = [];
+
+  //----------------------------------------------------------------------------
+  List<SmartLocation> _Location;
 
   @override
   void initState() {
     super.initState();
-    Services.getData().then((Location) {
+    ServicesSmartLocation.getData().then((Smartdata) {
       setState(() {
-        _Location = Location;
-        if (_Location != null) {
-          for (int i = 0; i < _Location.length; i++) {
-            SmartLocation data = _Location[i];
-            latitude = data.latitude;
-            longitude = data.longitude;
-            frequency = data.frequency;
-            rssi = data.rssi;
-            rssiP = data.rssiP;
-            snr = data.snr;
-            //----------------------------------------------------------------------------
-            setState(() {
-              _heatmaps.add(Heatmap(
-                  heatmapId: HeatmapId(_heatmapLocation.toString()),
-                  points: _createPoints(),
-                  radius: 40,
-                  visible: true,
-                  gradient: HeatmapGradient(
-                      colors: <Color>[Colors.green, Colors.red],
-                      startPoints: <double>[0.2, 0.8])));
-            });
-            //----------------------------------------------------------------------------
-          }
-        }
+        _Location = Smartdata;
+        //------------------------------cerate Heatmap---------------------------
+        _heatmaps.add(Heatmap(
+            heatmapId: HeatmapId(_heatmapLocation.toString()),
+            points: _createPoints(),
+            radius: 40,
+            visible: true,
+            gradient: HeatmapGradient(
+                colors: <Color>[Colors.green, Colors.red],
+                startPoints: <double>[0.2, 0.8])));
+        //------------------------------cerate Heatmap---------------------------
       });
     });
   }
-//----------------------------------------------------------------------------
 
+  //---------------------------------cerate Heatmap------------------------------
   //heatmap generation helper functions
   List<WeightedLatLng> _createPoints() {
     final List<WeightedLatLng> points = <WeightedLatLng>[];
     if (_Location != null) {
       for (int i = 0; i < _Location.length; i++) {
-
         SmartLocation data = _Location[i];
-        latitude = data.latitude;
-        longitude = data.longitude;
-        frequency = data.frequency;
-        rssi = data.rssi;
-        rssiP = data.rssiP;
-        snr = data.snr;
-        _heatmapLocation = LatLng(latitude, longitude);
+        _heatmapLocation = LatLng(data.latitude, data.longitude);
         points.add(_createWeightedLatLng(
-            latitude, longitude, int.parse(rssiP)));
+            data.latitude, data.longitude, int.parse(data.rssiP)));
       }
     }
-    //Can create multiple points here
-
     return points;
   }
 
@@ -92,27 +73,74 @@ class _HeatMapPages extends State<HeatMapPages> {
     return WeightedLatLng(point: LatLng(lat, lng), intensity: weight);
   }
 
+  //---------------------------------cerate Heatmap------------------------------
+  //-------------------------------------return----------------------------------
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: GoogleMap(
-        mapType: MapType.hybrid,
-        initialCameraPosition: _kGooglePlex,
-        heatmaps: _heatmaps,
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-        },
-      ),
-    );
+    return ScopedModelDescendant<AppModel>(
+        builder: (context, childm, scopModel) => new Scaffold(
+              appBar: AppBar(
+                title: Text('Heatmap'),
+              ),
+              body: GoogleMap(
+                mapType: MapType.hybrid,
+                //แสดงแผนที่รูปแบบดาวเทียม
+                initialCameraPosition: CameraPosition(
+                    target: LatLng(16.240551111111113, 103.25667333333334),
+                    zoom: 18.0),
+                markers: Set.from(myMarker),
+                onTap: _handleTap,
+                heatmaps: _heatmaps,
+              ),
+            ));
   }
-  Future<void> _go(CameraPosition CameraPosition) async {
-    final controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition));
+
+  //-------------------------------------return----------------------------------
+
+  //-----------------------------------Marker------------------------------------
+  _handleTap(LatLng tappedPoint) async {
+    AppModel scopemodel = ScopedModel.of(context);
+    double lat = tappedPoint.latitude, lng = tappedPoint.longitude;
+    print(lat);
+    String url =
+        'http://202.28.34.197/LoRaTracker/meanLocation/$lat/$lng/0.00005';
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final List<MeanLocation> dataList = meanLocationFromJson(response.body);
+        MeanLocation dataStr = dataList[0];
+        scopemodel.meantime = dataStr.time;
+        scopemodel.meanlatitude = dataStr.latitude;
+        scopemodel.meanlongitude = dataStr.longitude;
+        scopemodel..meanfrequency = dataStr.frequency;
+        scopemodel.meanrssi = dataStr.rssi;
+        scopemodel..meansnr = dataStr.snr;
+        lat = scopemodel.meanlatitude;
+        lng = scopemodel.meanlongitude;
+        setState(() {
+          myMarker = [];
+          myMarker.add(Marker(
+            markerId: MarkerId(tappedPoint.toString()),
+            position: tappedPoint,
+            icon:
+                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+            infoWindow: InfoWindow(
+                anchor: const Offset(0.5, 0.0),
+                title: 'ค่าเฉลี่ยความแรงของสัญญาณ',
+                snippet: '$lat, $lng',
+                onTap: () {
+                  Navigator.pushNamed(context, '/home-page');
+                }),
+          ));
+        });
+      } else {}
+    } catch (e) {}
   }
-//----------------------------------------------------------------------------
+//-----------------------------------Marker------------------------------------
 }
 
-class Services {
+//------------------------------------Service------------------------------------
+class ServicesSmartLocation {
   static const String url = 'http://202.28.34.197/LoRaTracker/SmartLocation/10';
 
   static Future<List<SmartLocation>> getData() async {
@@ -129,3 +157,23 @@ class Services {
     }
   }
 }
+
+class ServicesMeanLocation {
+  static const String url =
+      'http://202.28.34.197/LoRaTracker/meanLocation/16.240584/103.2569/0.00005';
+
+  static Future<List<MeanLocation>> getData() async {
+    try {
+      final response = await http.get(url);
+      if (200 == response.statusCode) {
+        final List<MeanLocation> data = meanLocationFromJson(response.body);
+        return data;
+      } else {
+        return List<MeanLocation>();
+      }
+    } catch (e) {
+      return List<MeanLocation>();
+    }
+  }
+}
+//------------------------------------Service------------------------------------
