@@ -23,6 +23,7 @@ class _HeatMapPages extends State<HeatMapPages> {
   String rssi;
   String snr;
   double lat, lng;
+  int sf = 7;
 
   var TappedPoint;
 
@@ -44,11 +45,11 @@ class _HeatMapPages extends State<HeatMapPages> {
         _heatmaps.add(Heatmap(
             heatmapId: HeatmapId(_heatmapLocation.toString()),
             points: _createPoints(),
-            radius: 40,
+            radius: 50,
             visible: true,
             gradient: HeatmapGradient(
                 colors: <Color>[Colors.green, Colors.red],
-                startPoints: <double>[0.2, 0.8])));
+                startPoints: <double>[0.2, 0.9])));
         //------------------------------cerate Heatmap---------------------------
       });
     });
@@ -101,22 +102,29 @@ class _HeatMapPages extends State<HeatMapPages> {
   _handleTap(LatLng tappedPoint) async {
     AppModel scopemodel = ScopedModel.of(context);
     double lat = tappedPoint.latitude, lng = tappedPoint.longitude;
-    print(lat);
+    // print(lat);
+    // print(lng);
     String url =
-        'http://202.28.34.197/LoRaTracker/meanLocation/$lat/$lng/0.00005';
+        //http://202.28.34.197/LoRaTracker/SmartMeanLocation/16.240449/103.256952/16.2466187/103.2521929/16.240135/103.257503/5
+        'http://202.28.34.197/LoRaTracker/SmartMeanLocation/16.240449/103.256952/16.2466187/103.2521929/$lat/$lng/7/5';
     try {
       final response = await http.get(url);
+      print(response.statusCode);
+
       if (response.statusCode == 200) {
-        final List<MeanLocation> dataList = meanLocationFromJson(response.body);
-        MeanLocation dataStr = dataList[0];
+        final List<MeanLocation> data = meanLocationFromJson(response.body);
+        MeanLocation dataStr = data[0];
         scopemodel.meantime = dataStr.time;
-        scopemodel.meanlatitude = dataStr.latitude;
-        scopemodel.meanlongitude = dataStr.longitude;
-        scopemodel..meanfrequency = dataStr.frequency;
-        scopemodel.meanrssi = dataStr.rssi;
-        scopemodel..meansnr = dataStr.snr;
-        lat = scopemodel.meanlatitude;
-        lng = scopemodel.meanlongitude;
+        scopemodel.latitude = dataStr.latitude;
+        scopemodel.longitude = dataStr.longitude;
+        scopemodel.frequency = dataStr.frequency;
+        scopemodel.rssi = dataStr.rssi;
+        scopemodel.min_rssi = dataStr.minRssi;
+        scopemodel.max_rssi = dataStr.maxRssi;
+        scopemodel.snr = dataStr.snr;
+        scopemodel.min_snr = dataStr.minRssi;
+        scopemodel.max_snr = dataStr.maxSnr;
+
         setState(() {
           myMarker = [];
           myMarker.add(Marker(
@@ -127,7 +135,10 @@ class _HeatMapPages extends State<HeatMapPages> {
             infoWindow: InfoWindow(
                 anchor: const Offset(0.5, 0.0),
                 title: 'ค่าเฉลี่ยความแรงของสัญญาณ',
-                snippet: '$lat, $lng',
+                snippet: 'lat:' +
+                    lat.toStringAsFixed(6) +
+                    ', lng:' +
+                    lng.toStringAsFixed(6),
                 onTap: () {
                   Navigator.pushNamed(context, '/home-page');
                 }),
@@ -141,7 +152,8 @@ class _HeatMapPages extends State<HeatMapPages> {
 
 //------------------------------------Service------------------------------------
 class ServicesSmartLocation {
-  static const String url = 'http://202.28.34.197/LoRaTracker/SmartLocation/10';
+  static const String url =
+      'http://202.28.34.197/LoRaTracker/SmartLocation/7/10';
 
   static Future<List<SmartLocation>> getData() async {
     try {

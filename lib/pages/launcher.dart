@@ -20,9 +20,9 @@ class _LauncherPages extends State<LauncherPages> {
   int _selectedIndex = 0;
   List<Widget> _pageWidget = <Widget>[
     HomePages(),
-    MapPages(),
+    // MapPages(),
     HeatMapPages(),
-    LocationPages(),
+    // LocationPages(),
   ];
 
   List<BottomNavigationBarItem> _menuBar = <BottomNavigationBarItem>[
@@ -30,18 +30,18 @@ class _LauncherPages extends State<LauncherPages> {
       icon: Icon(Icons.home),
       title: Text('Home'),
     ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.pin_drop),
-      title: Text('Maps'),
-    ),
+    // BottomNavigationBarItem(
+    //   icon: Icon(Icons.pin_drop),
+    //   title: Text('Maps'),
+    // ),
     BottomNavigationBarItem(
       icon: Icon(Icons.color_lens),
       title: Text('HeatMap'),
     ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.add_location),
-      title: Text('Location'),
-    ),
+    // BottomNavigationBarItem(
+    //   icon: Icon(Icons.add_location),
+    //   title: Text('Location'),
+    // ),
   ];
 
   void _onItemTapped(int index) {
@@ -54,15 +54,14 @@ class _LauncherPages extends State<LauncherPages> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<AppModel>(
         builder: (context, childm, scopModel) => Scaffold(
-            body: _pageWidget.elementAt(_selectedIndex),
-            bottomNavigationBar: BottomNavigationBar(
-              items: _menuBar,
-              currentIndex: _selectedIndex,
-              selectedItemColor: Theme.of(context).primaryColor,
-              unselectedItemColor: Colors.grey,
-              onTap: _onItemTapped,
-            ),
-        )
-    );
+              body: _pageWidget.elementAt(_selectedIndex),
+              bottomNavigationBar: BottomNavigationBar(
+                items: _menuBar,
+                currentIndex: _selectedIndex,
+                selectedItemColor: Theme.of(context).primaryColor,
+                unselectedItemColor: Colors.grey,
+                onTap: _onItemTapped,
+              ),
+            ));
   }
 }

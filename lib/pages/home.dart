@@ -55,170 +55,250 @@ class _HomePages extends State<HomePages> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<AppModel>(
         builder: (context, childm, scopModel) => Scaffold(
-          appBar: AppBar(
-            title: Text('Home'),
-          ),
-          body: Container(
-            color: Colors.white,
-            child: Center(
-              child: ListView(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 10, 30, 0),
-                    child: (scopModel.meanlatitude != null)
-                        ? Column(
-                      children: [
-                        Card(
-                          child: ListTile(
-                            title: Text('latitude'),
-                            subtitle: Text(
-                                scopModel.meanlatitude.toString()),
-                          ),
-                        ),
-                      ],
-                    )
-                        : Column(
-                      children: [
-                        Card(
-                          child: ListTile(
-                            title: Text('latitude'),
-                            subtitle: Text(''),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-                    child: (scopModel.meanlongitude != null)
-                        ? Column(
-                      children: [
-                        Card(
-                          child: ListTile(
-                            title: Text('longitude'),
-                            subtitle:
-                            Text(scopModel.meanlongitude.toString()),
-                          ),
-                        )
-                      ],
-                    )
-                        : Column(
-                      children: [
-                        Card(
-                          child: ListTile(
-                            title: Text('longitude'),
-                            subtitle: Text(''),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-                    child: (scopModel.meanrssi != null)
-                        ? Column(
-                      children: [
-                        Card(
-                          child: ListTile(
-                            title: Text('rssi'),
-                            subtitle: Text(scopModel.meanrssi.toString()),
-                          ),
-                        )
-                      ],
-                    )
-                        : Column(
-                      children: [
-                        Card(
-                          child: ListTile(
-                            title: Text('rssi'),
-                            subtitle: Text(''),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-                    child: (scopModel.meansnr != null)
-                        ? Column(
-                      children: [
-                        Card(
-                          child: ListTile(
-                            title: Text('snr'),
-                            subtitle: Text(scopModel.meansnr.toString()),
-                          ),
-                        )
-                      ],
-                    )
-                        : Column(
-                      children: [
-                        Card(
-                          child: ListTile(
-                            title: Text('snr'),
-                            subtitle: Text(''),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-                    child: (scopModel.meanfrequency != null)
-                        ? Column(
-                      children: [
-                        Card(
-                          child: ListTile(
-                            title: Text('frequency'),
-                            subtitle:
-                            Text(scopModel.meanfrequency.toString()),
-                          ),
-                        )
-                      ],
-                    )
-                        : Column(
-                      children: [
-                        Card(
-                          child: ListTile(
-                            title: Text('frequency'),
-                            subtitle: Text(''),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-                    child: (scopModel.meantime != null)
-                        ? Column(
-                      children: [
-                        Card(
-                          child: ListTile(
-                            title: Text('Time'),
-                            subtitle: Text(scopModel.meantime.toString()),
-                          ),
-                        )
-                      ],
-                    )
-                        : Column(
-                      children: [
-                        Card(
-                          child: ListTile(
-                            title: Text('Time'),
-                            subtitle: Text(''),
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
+              appBar: AppBar(
+                title: Text('Home'),
               ),
-            ),
-          ),
-        ));
+              body: Container(
+                color: Colors.white,
+                child: Center(
+                  child: ListView(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10.0),
+                        child: (scopModel.latitude != null)
+                            ? Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('latitude'),
+                                      subtitle:
+                                          Text(scopModel.latitude.toString()),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('longitude'),
+                                      subtitle: Text(''),
+                                    ),
+                                  )
+                                ],
+                              ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10.0),
+                        child: (scopModel.longitude != null)
+                            ? Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('longitude'),
+                                      subtitle:
+                                          Text(scopModel.longitude.toString()),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('longitude'),
+                                      subtitle: Text(''),
+                                    ),
+                                  )
+                                ],
+                              ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10.0),
+                        child: (scopModel.frequency != null)
+                            ? Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('frequency'),
+                                      subtitle:
+                                          Text(scopModel.frequency.toString()),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('frequency'),
+                                      subtitle: Text(''),
+                                    ),
+                                  )
+                                ],
+                              ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10.0),
+                        child: (scopModel.rssi != null)
+                            ? Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('rssi'),
+                                      subtitle: Text(scopModel.rssi.toString()),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('rssi'),
+                                      subtitle: Text(''),
+                                    ),
+                                  )
+                                ],
+                              ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10.0),
+                        child: (scopModel.min_rssi != null)
+                            ? Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('min rssi'),
+                                      subtitle:
+                                          Text(scopModel.min_rssi.toString()),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('min rssi'),
+                                      subtitle: Text(''),
+                                    ),
+                                  )
+                                ],
+                              ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10.0),
+                        child: (scopModel.max_rssi != null)
+                            ? Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('max rssi'),
+                                      subtitle:
+                                          Text(scopModel.max_rssi.toString()),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('max rssi'),
+                                      subtitle: Text(''),
+                                    ),
+                                  )
+                                ],
+                              ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10.0),
+                        child: (scopModel.snr != null)
+                            ? Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('snr'),
+                                      subtitle: Text(scopModel.snr.toString()),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('snr'),
+                                      subtitle: Text(''),
+                                    ),
+                                  )
+                                ],
+                              ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10.0),
+                        child: (scopModel.min_snr != null)
+                            ? Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('min snr'),
+                                      subtitle:
+                                          Text(scopModel.min_snr.toString()),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('min snr'),
+                                      subtitle: Text(''),
+                                    ),
+                                  )
+                                ],
+                              ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10.0),
+                        child: (scopModel.max_snr != null)
+                            ? Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('max snr'),
+                                      subtitle:
+                                          Text(scopModel.max_snr.toString()),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Card(
+                                    child: ListTile(
+                                      title: Text('max snr'),
+                                      subtitle: Text(''),
+                                    ),
+                                  )
+                                ],
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ));
   }
 }
